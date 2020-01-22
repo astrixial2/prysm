@@ -223,3 +223,23 @@ func (v *validator) RolesAt(slot uint64) map [[48]byte]pb.ValidatorRole  {
 		}
 	}
 }
+
+
+type ForckChoicer interface {
+	Head(ctx context.Context) ([]byte, error)
+	OnBlock(ctx context.Context, b *ethpb.BeaconBlock) error 
+	OnBlockNoVerifyStateTransition(ctxd context.Context, b *ethpb.BeaconBlock) error 
+	OnAttestation(ctx context.Context, a *ethpb.Attestation) (uint64, error)
+	GenesisStore(ctx context.Context, justifiedCheckPoint *ethpb.Checkpoint, finalizedChecKpoint *ethpb.Checkpoint) error 
+    FinalizeCheckpt() *ethpb.Checkpoint
+}
+
+type Store struct {
+	ctx context.Context
+	cancel context.CancelFunc 
+	db  db.Database 
+	justifiedCheckPoint *ethpb.Checkpoint
+	finalizedChecKpoint *ethpb.Checkpoint
+	prevFinalizedCheclpt *ethpb.Checkpoint
+	
+}
